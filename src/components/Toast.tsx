@@ -1,5 +1,6 @@
+import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Info, Sparkles, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, Info, Sparkles, X } from "lucide-react";
 import { EASE } from "./ui";
 
 export type ToastMessage = {
@@ -7,6 +8,8 @@ export type ToastMessage = {
   title: string;
   description?: string;
   type?: "success" | "info" | "gold";
+  actionLink?: string;
+  actionText?: string;
 };
 
 export default function Toast({
@@ -26,37 +29,47 @@ export default function Toast({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.35, ease: EASE }}
-            className="pointer-events-auto flex items-start gap-3.5 rounded-2xl border border-gold/30 bg-ink-2/95 p-4 shadow-2xl backdrop-blur-2xl ring-1 ring-gold/15"
+            className="pointer-events-auto flex items-start gap-3.5 rounded-2xl border border-white/15 bg-[#041d14]/95 p-4 shadow-2xl backdrop-blur-2xl ring-1 ring-white/10"
             role="alert"
           >
             <div className="shrink-0 mt-0.5">
               {t.type === "gold" ? (
-                <Sparkles className="h-5 w-5 text-gold-2 animate-pulse" />
+                <Sparkles className="h-4 w-4 text-gold/90" />
               ) : t.type === "info" ? (
-                <Info className="h-5 w-5 text-gold" />
+                <Info className="h-4 w-4 text-gold" />
               ) : (
-                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               )}
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-gold-light">
+              <p className="text-xs font-semibold uppercase tracking-wider text-cream">
                 {t.title}
               </p>
               {t.description && (
-                <p className="mt-1 text-xs text-sand/90 leading-snug">
+                <p className="mt-1 text-xs text-sand/80 leading-snug">
                   {t.description}
                 </p>
+              )}
+              {t.actionLink && (
+                <Link
+                  to={t.actionLink}
+                  onClick={() => onDismiss(t.id)}
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-cream underline underline-offset-4 hover:text-gold-light transition-colors"
+                >
+                  <span>{t.actionText || "View Bag"}</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
               )}
             </div>
 
             <button
               type="button"
               onClick={() => onDismiss(t.id)}
-              className="text-sand/50 hover:text-gold-light transition-colors p-1"
+              className="text-sand/50 hover:text-cream transition-colors p-1"
               aria-label="Dismiss notification"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </motion.div>
         ))}

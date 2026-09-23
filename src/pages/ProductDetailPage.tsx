@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -31,6 +31,22 @@ export default function ProductDetailPage({
   const [selectedSizeIndex, setSelectedSizeIndex] = useState(1); // default 12ml
   const [activeTab, setActiveTab] = useState<"pyramid" | "provenance" | "ritual" | "layering">("pyramid");
   const [isAdded, setIsAdded] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show sticky bar once scrolled down past initial fold on mobile
+      if (window.scrollY > 300) {
+        setShowStickyBar(true);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (!product) {
     return <Navigate to="/collection" replace />;
@@ -47,7 +63,7 @@ export default function ProductDetailPage({
   };
 
   return (
-    <div className="relative pt-28 pb-24 sm:pb-32 text-cream">
+    <div className="relative pt-32 sm:pt-36 pb-24 sm:pb-32 text-cream">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-sand/60">
@@ -419,6 +435,84 @@ export default function ProductDetailPage({
             ))}
           </div>
         </section>
+      </div>
+
+      {/* Mobile Sticky Add to Cart Bar */}
+      <div
+        className={cn(
+          "fixed bottom-0 inset-x-0 z-40 border-t border-gold/30 bg-ink-2/95 backdrop-blur-2xl px-3 sm:px-4 pt-3 pb-[max(env(safe-area-inset-bottom,0px),0.75rem)] shadow-[0_-10px_35px_rgba(0,0,0,0.85)] transition-all duration-300 ease-out lg:hidden",
+          showStickyBar ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-2.5">
+          {/* Flacon thumbnail + Name & Price */}
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-gold/30 bg-ink">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="min-w-0">
+              <h4 className="truncate font-display text-sm font-semibold text-cream leading-tight">
+                {product.name}
+              </h4>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="font-display text-xs sm:text-sm font-bold text-gold-light">
+                  ${currentSize.price}
+                </span>
+                <span className="text-[10px] text-sand/60">
+                  · {currentSize.volume}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Volume Selector & CTA */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Size segmented pills */}
+            <div className="flex rounded-xl border border-gold/20 bg-ink/60 p-0.5">
+              {product.sizes.map((size, idx) => (
+                <button
+                  key={size.id}
+                  type="button"
+                  onClick={() => setSelectedSizeIndex(idx)}
+                  className={cn(
+                    "px-2 py-1 text-[10px] font-bold rounded-lg transition-all",
+                    selectedSizeIndex === idx
+                      ? "bg-gold text-ink shadow-sm"
+                      : "text-sand/70 hover:text-cream"
+                  )}
+                >
+                  {size.volume}
+                </button>
+              ))}
+            </div>
+
+            {/* Add to Cart CTA */}
+            <button
+              type="button"
+              onClick={handleAdd}
+              className={cn(
+                "btn-gold flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-black uppercase tracking-wider shadow-md whitespace-nowrap",
+                isAdded && "bg-emerald-400 text-ink"
+              )}
+            >
+              {isAdded ? (
+                <>
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <span>Add to Bag</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

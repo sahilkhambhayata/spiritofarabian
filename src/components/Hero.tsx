@@ -37,8 +37,8 @@ export default function Hero({
 
   return (
     <section
-      id="top"
-      className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden bg-ink pt-32 pb-20 sm:pt-36 sm:pb-24"
+      id="signature-story"
+      className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden bg-ink pt-20 pb-20 sm:pt-24 sm:pb-24 border-t border-gold/15"
       aria-label="SPIRIT OF ARABIAN Introduction"
     >
       {/* Ambient Dynamic Background Hue */}
@@ -99,10 +99,10 @@ export default function Hero({
                 </span>
               </div>
 
-              <h1 className="font-display mt-3 text-4xl sm:text-5xl lg:text-[4.2rem] font-medium leading-[1.02] text-cream">
+              <h2 className="font-display mt-3 text-4xl sm:text-5xl lg:text-[4.2rem] font-medium leading-[1.02] text-cream">
                 Liquid Gold, <br />
                 <em className="gold-text italic font-semibold">Worn on Skin.</em>
-              </h1>
+              </h2>
 
               <AnimatePresence mode="wait">
                 <motion.div

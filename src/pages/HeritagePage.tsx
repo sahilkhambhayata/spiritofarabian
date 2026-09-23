@@ -5,7 +5,7 @@ import { CountUp, Reveal, SectionHead } from "../components/ui";
 
 export default function HeritagePage() {
   return (
-    <div className="relative pt-28 pb-24 sm:pb-32 text-cream">
+    <div className="relative pt-32 sm:pt-36 pb-24 sm:pb-32 text-cream">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-sand/60">
@@ -60,18 +60,57 @@ export default function HeritagePage() {
           <div className="lg:col-span-6">
             <Reveal className="glass-card overflow-hidden rounded-3xl border border-gold/30 shadow-2xl p-4">
               <img
-                src="/images/craft.jpg"
-                alt="Master distiller inspecting copper stills"
-                className="aspect-[4/3] w-full object-cover rounded-2xl"
+                src="/images/arabian-brand-assets.jpg"
+                alt="SPIRIT OF ARABIAN Maison d'Attar brand assets and crystal flacons"
+                className="aspect-[16/10] w-full object-cover rounded-2xl"
               />
               <div className="mt-4 flex items-center justify-between px-2 text-xs text-sand/70">
                 <span className="flex items-center gap-1.5 text-gold-light font-semibold">
-                  <MapPin className="h-4 w-4 text-gold" /> Master Atelier No. 3
+                  <MapPin className="h-4 w-4 text-gold" /> The Imperial Flacon Atelier
                 </span>
-                <span>Kannauj, Taif & Dubai</span>
+                <span>Numbered Crystal Reserves</span>
               </div>
             </Reveal>
           </div>
+        </div>
+
+        {/* Artisanal Flacon & Vault Showcase Gallery */}
+        <div className="mt-16 grid gap-6 sm:grid-cols-2">
+          <Reveal delay={0.1}>
+            <div className="glass-card overflow-hidden rounded-3xl border border-gold/25 p-4 shadow-xl">
+              <img
+                src="/images/arabian-vault-box.jpg"
+                alt="Imperial Extrait in emerald velvet presentation vault with agarwood and frankincense"
+                className="aspect-[16/10] w-full object-cover rounded-2xl"
+              />
+              <div className="mt-3 px-2">
+                <h4 className="font-display text-base font-semibold text-gold-light">
+                  The Imperial Velvet Presentation Vault
+                </h4>
+                <p className="text-xs text-sand/70 mt-0.5">
+                  Hand-crafted green velvet presentation case with golden satin lining and pure wax seal.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="glass-card overflow-hidden rounded-3xl border border-gold/25 p-4 shadow-xl">
+              <img
+                src="/images/arabian-flacon-box.jpg"
+                alt="The signature crystal flacon with gold filigree cap and royal wax seal"
+                className="aspect-[16/10] w-full object-cover rounded-2xl"
+              />
+              <div className="mt-3 px-2">
+                <h4 className="font-display text-base font-semibold text-gold-light">
+                  Heavy Faceted Lead Crystal Flacon
+                </h4>
+                <p className="text-xs text-sand/70 mt-0.5">
+                  Gold filigree dome cap with an integrated glass dip wand for precise ritual application.
+                </p>
+              </div>
+            </div>
+          </Reveal>
         </div>
 
         {/* 4 Pillars of Craft */}

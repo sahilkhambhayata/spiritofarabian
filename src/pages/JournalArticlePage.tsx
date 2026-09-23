@@ -13,7 +13,7 @@ export default function JournalArticlePage() {
   const related = JOURNAL_ARTICLES.filter((a) => a.slug !== article.slug);
 
   return (
-    <div className="relative pt-28 pb-24 sm:pb-32 text-cream">
+    <div className="relative pt-32 sm:pt-36 pb-24 sm:pb-32 text-cream">
       <div className="mx-auto max-w-4xl px-4 sm:px-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-sand/60">

@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import CartDrawer from "./components/CartDrawer";
 import CheckoutModal from "./components/CheckoutModal";
 import ScentQuizModal from "./components/ScentQuizModal";
 import Toast, { type ToastMessage } from "./components/Toast";
@@ -16,26 +15,37 @@ import HeritagePage from "./pages/HeritagePage";
 import JournalPage from "./pages/JournalPage";
 import JournalArticlePage from "./pages/JournalArticlePage";
 import ConciergePage from "./pages/ConciergePage";
+import CartPage from "./pages/CartPage";
+import PolicyPage from "./pages/PolicyPage";
+import TrackOrderPage from "./pages/TrackOrderPage";
 
 import { FREE_SAMPLES, type CartItem, type Product, type ProductSize } from "./data";
 
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [discountPercent, setDiscountPercent] = useState(0);
   const [selectedSample, setSelectedSample] = useState(FREE_SAMPLES[0].id);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // Toast Helper
+  // Toast Helper with optional action link
   const addToast = useCallback(
-    (title: string, description?: string, type: "success" | "info" | "gold" = "success") => {
+    (
+      title: string,
+      description?: string,
+      type: "success" | "info" | "gold" = "success",
+      actionLink?: string,
+      actionText?: string
+    ) => {
       const id = `${Date.now()}-${Math.random()}`;
-      setToasts((prev) => [...prev, { id, title, description, type }]);
+      setToasts((prev) => [
+        ...prev,
+        { id, title, description, type, actionLink, actionText },
+      ]);
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 4000);
+      }, 4500);
     },
     []
   );
@@ -44,7 +54,7 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Add Product to Cart with chosen size
+  // Add Product to Cart with chosen size (counts plus smoothly)
   const handleAddProduct = useCallback(
     (product: Product, selectedSize?: ProductSize) => {
       const size = selectedSize || product.sizes[1] || product.sizes[0];
@@ -74,11 +84,12 @@ export default function App() {
       });
 
       addToast(
-        `Added to Imperial Bag`,
+        `Added to Bag`,
         `${product.name} (${size.volume}) — $${size.price}`,
-        "gold"
+        "gold",
+        "/cart",
+        "View Cart & Checkout"
       );
-      setIsCartOpen(true);
     },
     [addToast]
   );
@@ -113,9 +124,10 @@ export default function App() {
     addToast(
       `Discovery Ritual Added`,
       `The 5-Extrait Discovery Coffret ($59 credited toward your flacon)`,
-      "gold"
+      "gold",
+      "/cart",
+      "View Cart & Checkout"
     );
-    setIsCartOpen(true);
   }, [addToast]);
 
   // Cart quantity controls
@@ -144,7 +156,11 @@ export default function App() {
         normalized === "VIP15"
       ) {
         setDiscountPercent(15);
-        addToast("VIP Privilege Applied!", "15% discount has been applied to your order.", "gold");
+        addToast(
+          "VIP Privilege Applied!",
+          "15% privilege discount has been applied to your order.",
+          "gold"
+        );
         return true;
       }
       return false;
@@ -161,7 +177,9 @@ export default function App() {
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
-  const finalTotal = Math.max(0, subtotal - discountAmount) + (subtotal >= 95 ? 0 : subtotal > 0 ? 15 : 0);
+  const finalTotal =
+    Math.max(0, subtotal - discountAmount) +
+    (subtotal >= 95 ? 0 : subtotal > 0 ? 15 : 0);
 
   return (
     <BrowserRouter>
@@ -169,8 +187,8 @@ export default function App() {
       <div className="noise relative min-h-screen bg-ink font-sans text-cream antialiased selection:bg-gold/30">
         <Navbar
           cartCount={totalCartCount}
-          onOpenCart={() => setIsCartOpen(true)}
           onOpenQuiz={() => setIsQuizOpen(true)}
+          onAddProduct={handleAddProduct}
         />
 
         <main id="main-content" className="min-h-[70vh]">
@@ -201,31 +219,56 @@ export default function App() {
                 />
               }
             />
+            <Route
+              path="/cart"
+              element={
+                <CartPage
+                  items={cartItems}
+                  onUpdateQty={handleUpdateQty}
+                  onRemoveItem={handleRemoveItem}
+                  onAddProduct={handleAddProduct}
+                  onCheckout={() => setIsCheckoutOpen(true)}
+                  discountPercent={discountPercent}
+                  onApplyPromo={handleApplyPromo}
+                  selectedSample={selectedSample}
+                  onSelectSample={setSelectedSample}
+                />
+              }
+            />
             <Route path="/heritage" element={<HeritagePage />} />
+            <Route path="/about" element={<HeritagePage />} />
+            <Route path="/about-us" element={<HeritagePage />} />
+
             <Route path="/journal" element={<JournalPage />} />
+            <Route path="/blogs" element={<JournalPage />} />
+            <Route path="/blog" element={<JournalPage />} />
             <Route path="/journal/:slug" element={<JournalArticlePage />} />
+
             <Route path="/concierge" element={<ConciergePage />} />
+            <Route path="/contact" element={<ConciergePage />} />
+            <Route path="/contact-us" element={<ConciergePage />} />
+
+            {/* Dedicated Interactive Track Order Page */}
+            <Route path="/track-order" element={<TrackOrderPage />} />
+
+            {/* Dedicated Policy & FAQ Pages */}
+            <Route path="/shipping-policy" element={<PolicyPage initialTab="shipping" />} />
+            <Route path="/return-policy" element={<PolicyPage initialTab="return" />} />
+            <Route path="/return-exchange-policy" element={<PolicyPage initialTab="return" />} />
+            <Route path="/privacy-policy" element={<PolicyPage initialTab="privacy" />} />
+            <Route path="/terms-of-service" element={<PolicyPage initialTab="terms" />} />
+            <Route path="/terms" element={<PolicyPage initialTab="terms" />} />
+            <Route path="/refund-policy" element={<PolicyPage initialTab="refund" />} />
+            <Route path="/faqs" element={<PolicyPage initialTab="faqs" />} />
+            <Route path="/faq" element={<PolicyPage initialTab="faqs" />} />
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 
-        <Footer onOpenQuiz={() => setIsQuizOpen(true)} />
-
-        {/* Global Slide-Out Cart Drawer */}
-        <CartDrawer
-          open={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          items={cartItems}
-          onUpdateQty={handleUpdateQty}
-          onRemoveItem={handleRemoveItem}
-          onCheckout={() => {
-            setIsCartOpen(false);
-            setIsCheckoutOpen(true);
-          }}
-          discountPercent={discountPercent}
-          onApplyPromo={handleApplyPromo}
-          selectedSample={selectedSample}
-          onSelectSample={setSelectedSample}
+        <Footer
+          onOpenQuiz={() => setIsQuizOpen(true)}
+          onAddProduct={handleAddProduct}
         />
 
         {/* Global Checkout Modal */}
@@ -245,7 +288,7 @@ export default function App() {
           onAddProduct={(p) => handleAddProduct(p)}
         />
 
-        {/* Global Toast Notification System */}
+        {/* Global Floating Toast Notifications */}
         <Toast toasts={toasts} onDismiss={dismissToast} />
       </div>
     </BrowserRouter>

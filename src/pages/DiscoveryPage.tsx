@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Check, Compass, Package, Sparkles } from "lucide-react";
 import { PRODUCTS } from "../data";
@@ -13,6 +13,21 @@ export default function DiscoveryPage({
   onOpenQuiz: () => void;
 }) {
   const [isAdded, setIsAdded] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowStickyBar(true);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleAdd = () => {
     onAddDiscovery();
@@ -21,7 +36,7 @@ export default function DiscoveryPage({
   };
 
   return (
-    <div className="relative pt-28 pb-24 sm:pb-32 text-cream">
+    <div className="relative pt-32 sm:pt-36 pb-24 sm:pb-32 text-cream">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-sand/60">
@@ -107,9 +122,9 @@ export default function DiscoveryPage({
           <div className="lg:col-span-6">
             <Reveal className="glass-card relative overflow-hidden rounded-3xl border border-gold/30 shadow-2xl p-4">
               <img
-                src="/images/discovery-set.jpg"
+                src="/images/arabian-vault-box.jpg"
                 alt="The Discovery Ritual 5-vial crystal coffret"
-                className="aspect-[4/3] w-full object-cover rounded-2xl"
+                className="aspect-[4/3] w-full object-cover rounded-2xl shadow-inner"
               />
               <div className="mt-4 flex items-center justify-between px-2">
                 <div>
@@ -183,6 +198,62 @@ export default function DiscoveryPage({
             ))}
           </div>
         </section>
+      </div>
+
+      {/* Mobile Sticky Add to Cart Bar */}
+      <div
+        className={cn(
+          "fixed bottom-0 inset-x-0 z-40 border-t border-gold/30 bg-ink-2/95 backdrop-blur-2xl px-4 pt-3 pb-[max(env(safe-area-inset-bottom,0px),0.75rem)] shadow-[0_-10px_35px_rgba(0,0,0,0.85)] transition-all duration-300 ease-out lg:hidden",
+          showStickyBar ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+          {/* Coffret thumbnail + Info */}
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-gold/30 bg-ink">
+              <img
+                src="/images/discovery-set.jpg"
+                alt="The Discovery Ritual"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="min-w-0">
+              <h4 className="truncate font-display text-sm font-semibold text-cream leading-tight">
+                The Discovery Ritual
+              </h4>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="font-display text-xs sm:text-sm font-bold text-gold-light">
+                  $59 USD
+                </span>
+                <span className="text-[10px] text-sand/60">
+                  · 100% Scent Credit
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Add to Cart CTA */}
+          <button
+            type="button"
+            onClick={handleAdd}
+            className={cn(
+              "btn-gold flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black uppercase tracking-wider shadow-md whitespace-nowrap",
+              isAdded && "bg-emerald-400 text-ink"
+            )}
+          >
+            {isAdded ? (
+              <>
+                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                <span>Added</span>
+              </>
+            ) : (
+              <>
+                <Package className="h-3.5 w-3.5" />
+                <span>Acquire — $59</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -277,7 +277,7 @@ export default function CheckoutModal({
 
                 <button
                   type="submit"
-                  className="btn-gold w-full flex items-center justify-center gap-3 rounded-full py-4 text-xs font-black uppercase tracking-[0.25em]"
+                  className="w-full flex items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-xs font-black uppercase tracking-[0.22em] text-ink shadow-[0_4px_25px_rgba(255,255,255,0.25)] hover:bg-cream hover:shadow-[0_6px_30px_rgba(255,255,255,0.4)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300"
                 >
                   <Lock className="h-4 w-4" />
                   Confirm & Place Imperial Order (${totalPrice})
